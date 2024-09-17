@@ -7,10 +7,10 @@ export class AppService {
   private readonly description = `This is a simple Instagram clone API built with NestJS. It allows users to register, login, and perform various actions similar to Instagram.`;
 
   version() {
-    return ({
+    return {
       name: this.name,
       version: this.ver,
       description: this.description,
-    });
+    };
   }
 }

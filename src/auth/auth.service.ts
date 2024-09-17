@@ -7,56 +7,74 @@ import { LoginDto } from './dto/login.dto';
 
 @Injectable()
 export class AuthService {
-    constructor(
-        private readonly usersService: UsersService,
-        private readonly jwtService: JwtService
-    ) {}
+  constructor(
+    private readonly usersService: UsersService,
+    private readonly jwtService: JwtService,
+  ) {}
 
-    async register({ fullName, userName, phoneNumber, email, password }: RegisterDto) {
-        const user = await this.usersService.findByEmail(email);
+  async register({
+    fullName,
+    userName,
+    phoneNumber,
+    email,
+    password,
+  }: RegisterDto) {
+    const user = await this.usersService.findByEmail(email);
 
-        // verificación de existencia de email
-        if (user) {
-            throw new BadRequestException('Email already exists');
-        }
-
-        // encriptamos la contraseña
-        const hashedPassword = await bcryptjs.hash(password, 10);
-
-        await this.usersService.create({
-            fullName,
-            userName,
-            phoneNumber,
-            email,
-            password: hashedPassword,
-        });
-
-        return {
-            message: 'User created successfully',
-        };
+    // verificación de existencia de email
+    if (user) {
+      throw new BadRequestException('Email already exists');
     }
 
-    async login({ userName, password }: LoginDto) {
-        const user = await this.usersService.findByUserName(userName);
+    // encriptamos la contraseña
+    const hashedPassword = await bcryptjs.hash(password, 10);
 
-        if (!user) {
-            throw new BadRequestException('User not found');
-        }
+    await this.usersService.create({
+      fullName,
+      userName,
+      phoneNumber,
+      email,
+      password: hashedPassword,
+    });
 
-        const isPasswordValid = await bcryptjs.compare(password, user.password);
+    return {
+      message: 'User created successfully',
+    };
+  }
 
-        if (!isPasswordValid) {
-            throw new BadRequestException('Invalid password');
-        }
+  async login({ userName, password }: LoginDto) {
+    const user = await this.usersService.findByUserName(userName);
 
-        const payload = { user };
-
-        const token = await this.jwtService.signAsync(payload);
-
-        return {
-            message: 'User logged in successfully',
-            user: user.userName,
-            token,
-        };
+    if (!user) {
+      throw new BadRequestException('User not found');
     }
+
+    const isPasswordValid = await bcryptjs.compare(password, user.password);
+
+    if (!isPasswordValid) {
+      throw new BadRequestException('Invalid password');
+    }
+
+    const payload = { user };
+
+    const token = await this.jwtService.signAsync(payload);
+
+    return {
+      message: 'User logged in successfully',
+      user: user.userName,
+      token,
+    };
+  }
+
+  async googleLogin() {
+    return {
+      message: 'Google login',
+    };
+  }
+
+  async googleCallback() {
+    return {
+      message: 'Google callback',
+    };
+  }
 }

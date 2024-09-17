@@ -1,12 +1,12 @@
 import {
-  CanActivate,
-  ExecutionContext,
+  type CanActivate,
+  type ExecutionContext,
   Injectable,
   UnauthorizedException,
-} from "@nestjs/common";
-import { JwtService } from "@nestjs/jwt";
-import { Request } from "express";
-import { jwtConstants } from "./constants/jwt.constants";
+} from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import { Request } from 'express';
+import { jwtConstants } from '../constants/jwt.constants';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -26,6 +26,7 @@ export class AuthGuard implements CanActivate {
 
       const expirationTime = payload.exp * 1000;
       const timeUntilExpiration = expirationTime - Date.now();
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { exp, iat, ...newPayload } = payload;
 
       if (timeUntilExpiration < 15 * 60 * 1000) {
@@ -45,7 +46,7 @@ export class AuthGuard implements CanActivate {
   }
 
   private extractTokenFromHeader(request: Request) {
-    const [type, token] = request.headers.authorization?.split(" ") ?? [];
-    return type === "Bearer" ? token : undefined;
+    const [type, token] = request.headers.authorization?.split(' ') ?? [];
+    return type === 'Bearer' ? token : undefined;
   }
 }
